@@ -39,7 +39,7 @@ pkg install python openssh git -y
 
 Step 3: Clone the repository
 
-git clone https://github.com/RDCS-SOCIETY/FF_H4CK-V1.git
+git clone https://github.com/RDCD-SOCIETY/FF_H4CK-V1.git
 
 Step 4: Navigate to the project directory
 
