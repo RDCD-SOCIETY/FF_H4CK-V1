@@ -1,6 +1,6 @@
 # FF_H4CK-V1
 <p align="center">
-  <img src="vd.jpg" width="200" alt="Profile Photo">
+  <img src="vd.png" width="200" alt="Profile Photo">
   <br>
   <b>RDCS SOCIETY</b>
 </p>
